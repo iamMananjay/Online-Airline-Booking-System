@@ -8,13 +8,15 @@ import java.util.Map;
 
 public interface SeatService {
     List<Seat> getAllSeats();
-//    Seat updateSeatAvailability(String flightNumber, String seatNumber, boolean available);
-    Seat lockSeat(String seatNumber);
-    Seat unlockSeat(String seatNumber);
+    void lockSeat(String seatNumber);
+    void unlockSeat(String seatNumber);
     Map<String, Boolean> convertSeatsToMap(List<Seat> seats);
     List<Seat> getSeatsByFlightId(Long flightId);
     Seat getSeatByNumberAndFlight(String seatNumber, Flight flight);
     void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability);
+    Seat getSeatByNumberAndFlight(String seatNumber, String flightNumber);
+
+    void updateSeat(Seat seat);
 
 
 }

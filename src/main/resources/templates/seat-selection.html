@@ -45,16 +45,21 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        .available {
-            background-color: lightgreen;
-        }
-        .unavailable {
-            background-color: lightcoral;
-            pointer-events: none;
-        }
-        .fire-exit {
-            background-color: orange;
-        }
+       .available {
+    background-color: lightgreen;
+}
+.unavailable{
+    background-color: darkgrey; /* Use dark grey for booked seats */
+    pointer-events: none;
+
+}
+.booked {
+    background-color: lightcoral;
+}
+.fire-exit {
+    background-color: orange;
+}
+
         .selected {
             background-color: lightblue;
         }
@@ -159,24 +164,30 @@
 <div th:replace="navbar"></div>
 <h2>Seat Selection</h2>
 <form id="seatForm" action="/seats/flight/book" method="post">
-
     <input type="hidden" name="flightNumber" id="flightNumber" th:value="${seats[0].flightNumber}" />
     <input type="hidden" name="price" id="price" value=""/>
 
     <div class="seat-plan">
         <div th:each="seat, iterStat : ${seats}">
             <div th:if="${iterStat.count % 6 == 1}" class="row"></div>
-            <div th:class="'seat ' + (${seat.available} ? 'available' : 'unavailable') + ' ' + (${seat.fireExit} ? 'fire-exit' : '')"
+            <div th:class="'seat ' + (${seat.available == false} ? 'booked' : (${seat.available == true && seat.locked == false} ? 'available' : 'unavailable')) + (${seat.fireExit} ? ' fire-exit' : '')"
                  th:data-seat-number="${seat.seatNumber}"
                  th:data-ticket-price="${seat.ticketPrice}"
-            onclick="selectSeat(this)">
+                 th:data-locked="${seat.locked}"
+                 th:data-lockedd="${seat.available}"
+                 onclick="selectSeat(this)">
                 <span th:text="${seat.seatNumber}"></span>
             </div>
         </div>
     </div>
+
+
+
+
     <input type="hidden" name="selectedSeats" id="selectedSeats" value=""/>
     <button type="button" class="confirm-button" onclick="showPopup()">Confirm Booking</button>
 </form>
+
 <div class="legend">
     <div class="legend-item">
         <div class="legend-box" style="background-color: lightgreen;"></div>
@@ -184,6 +195,10 @@
     </div>
     <div class="legend-item">
         <div class="legend-box" style="background-color: lightcoral;"></div>
+        <span>Booked</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-box" style="background-color: darkgrey;"></div>
         <span>Unavailable</span>
     </div>
     <div class="legend-item">
@@ -191,6 +206,7 @@
         <span>Fire Exit</span>
     </div>
 </div>
+
 
 <!-- Modal -->
 <div id="bookingModal" class="modal">
@@ -220,13 +236,47 @@
             if ($(seatElement).hasClass('selected')) {
                 $(seatElement).removeClass('selected');
                 selectedSeats = selectedSeats.filter(seat => seat !== $(seatElement).data('seat-number'));
+                // Unlock the seat on deselection
+            unlockSeat($(seatElement).data('seat-number'))
             } else {
                 $(seatElement).addClass('selected');
                 selectedSeats.push($(seatElement).data('seat-number'));
+                // Lock the seat on selection
+            lockSeat($(seatElement).data('seat-number'));
             }
             $('#selectedSeats').val(selectedSeats.join(','));
         }
     }
+    function lockSeat(seatNumber) {
+    const flightNumber = $('#flightNumber').val(); // Get the flight number from the form or a hidden input
+    $.ajax({
+        url: "/seats/lock",
+        method: "POST",
+        data: { seatNumber: seatNumber, flightNumber: flightNumber },
+        success: function(response) {
+            console.log("Seat locked successfully: " + seatNumber);
+        },
+        error: function() {
+            console.log("An error occurred while locking the seat: " + seatNumber);
+        }
+    });
+}
+
+function unlockSeat(seatNumber) {
+    const flightNumber = $('#flightNumber').val(); // Get the flight number from the form or a hidden input
+    $.ajax({
+        url: "/seats/unlock",
+        method: "POST",
+        data: { seatNumber: seatNumber, flightNumber: flightNumber },
+        success: function(response) {
+            console.log("Seat unlocked successfully: " + seatNumber);
+        },
+        error: function() {
+            console.log("An error occurred while unlocking the seat: " + seatNumber);
+        }
+    });
+}
+
 
     function showPopup() {
     const numberOfSeats = selectedSeats.length;
@@ -318,6 +368,8 @@
             alert("An error occurred while checking authentication.");
         }
     });
+
+
 }
 
 </script>

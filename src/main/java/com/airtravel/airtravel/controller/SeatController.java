@@ -9,6 +9,7 @@ import com.airtravel.airtravel.service.FlightService;
 import com.airtravel.airtravel.service.SeatService;
 import com.airtravel.airtravel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -64,22 +65,18 @@ public class SeatController {
                             @RequestParam("price") double price,
                             RedirectAttributes redirectAttributes) {
 
-        // Requirement 1: Limit on Booking Seats
         // Server-side validation to ensure no more than 6 seats are booked at once
         if (selectedSeats.size() > 6) {
             redirectAttributes.addFlashAttribute("bookingErrorMessage", "You can only book up to 6 seats at once.");
             return "redirect:/seats/flight/" + flightNumber;
         }
 
-        // Requirement 2: Discount for Children
         if (numberOfChildren > 0) {
-            // Validate if the number of children exceeds the selected seats
             if (selectedSeats.size() < numberOfChildren) {
                 redirectAttributes.addFlashAttribute("bookingErrorMessage", "Number of children exceeds the selected seats.");
                 return "redirect:/seats/flight/" + flightNumber;
             }
 
-            // Validate if children are seated next to a guardian
             List<Integer> seatNumbers = selectedSeats.stream()
                     .map(seat -> Integer.parseInt(seat.replaceAll("[^\\d]", "")))
                     .sorted()
@@ -105,6 +102,14 @@ public class SeatController {
                 .map(seatNumber -> seatService.getSeatByNumberAndFlight(seatNumber, flight))
                 .collect(Collectors.toList());
 
+        // Check if any of the selected seats are locked and not available
+        for (Seat seat : seats) {
+            if (seat.isLocked() && !seat.isAvailable()) {
+                redirectAttributes.addFlashAttribute("bookingErrorMessage", "One or more selected seats are locked or unavailable.");
+                return "redirect:/seats/flight/" + flightNumber;
+            }
+        }
+
         // Create Booking object and set booking details
         Booking booking = new Booking();
         booking.setFlight(flight);
@@ -115,9 +120,12 @@ public class SeatController {
         booking.setBookingDateTime(LocalDateTime.now()); // Set booking date and time
         bookingService.saveBooking(booking);
 
-        // Update seat availability
+        // Update seat availability and unlock seats
         for (Seat seat : seats) {
-            seatService.updateSeatAvailability(flightNumber, seat.getSeatNumber(), false);
+            seat.setAvailable(false);
+            seat.setLocked(false);
+            seat.setLockedAt(null);
+            seatService.updateSeat(seat);
         }
 
         redirectAttributes.addFlashAttribute("bookingSuccessMessage", "Your booking has been confirmed!");
@@ -129,15 +137,31 @@ public class SeatController {
 
 
 
-    @PutMapping("/lock/{seatNumber}")
-    @ResponseBody
-    public Seat lockSeat(@PathVariable String seatNumber) {
-        return seatService.lockSeat(seatNumber);
+
+
+
+    @PostMapping("/lock")
+    public ResponseEntity<?> lockSeat(@RequestParam("seatNumber") String seatNumber, @RequestParam("flightNumber") String flightNumber) {
+        Seat seat = seatService.getSeatByNumberAndFlight(seatNumber, flightNumber);
+        if (seat != null && seat.isAvailable() && !seat.isLocked()) {
+            seat.setLocked(true);
+            seat.setLockedAt(LocalDateTime.now());
+            seatService.updateSeat(seat);
+            return ResponseEntity.ok("Seat locked successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Seat is not available or already locked");
     }
 
-    @PutMapping("/unlock/{seatNumber}")
-    @ResponseBody
-    public Seat unlockSeat(@PathVariable String seatNumber) {
-        return seatService.unlockSeat(seatNumber);
+    @PostMapping("/unlock")
+    public ResponseEntity<?> unlockSeat(@RequestParam("seatNumber") String seatNumber, @RequestParam("flightNumber") String flightNumber) {
+        Seat seat = seatService.getSeatByNumberAndFlight(seatNumber, flightNumber);
+        if (seat != null && seat.isLocked()) {
+            seat.setLocked(false);
+            seat.setLockedAt(null);
+            seatService.updateSeat(seat);
+            return ResponseEntity.ok("Seat unlocked successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Seat is not locked or does not exist");
     }
+
 }

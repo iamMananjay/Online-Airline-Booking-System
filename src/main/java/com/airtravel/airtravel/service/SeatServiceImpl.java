@@ -1,14 +1,12 @@
 package com.airtravel.airtravel.service;
 
 
-
-
-
 import com.airtravel.airtravel.model.Flight;
 import com.airtravel.airtravel.model.Seat;
 import com.airtravel.airtravel.repository.FlightRepository;
 import com.airtravel.airtravel.repository.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,46 +29,47 @@ public class SeatServiceImpl implements SeatService {
         return seatRepository.findAll();
     }
 
-//    @Override
-//    public Seat updateSeatAvailability(String flightNumber, String seatNumber, boolean available) {
-//        Optional<Seat> optionalSeat = seatRepository.findByFlight_FlightNumberAndSeatNumber(flightNumber, seatNumber);
-//        if (optionalSeat.isPresent()) {
-//            Seat seat = optionalSeat.get();
-//            seat.setAvailable(available);
-//            return seatRepository.save(seat);
-//        } else {
-//            // Handle the case where the seat with the given flight number and seat number is not found
-//            // You can throw an exception or return null, depending on your requirement
-//            return null;
-//        }
-//    }
-
-
-
 
     @Override
-    public Seat lockSeat(String seatNumber) {
-        Optional<Seat> optionalSeat = seatRepository.findBySeatNumber(seatNumber);
-        if (optionalSeat.isPresent()) {
-            Seat seat = optionalSeat.get();
+    public void updateSeat(Seat seat) {
+        seatRepository.save(seat);
+    }
+
+    public void lockSeat(String seatNumber) {
+        Optional<Seat> seatOptional = seatRepository.findBySeatNumber(seatNumber);
+        if (seatOptional.isPresent()) {
+            Seat seat = seatOptional.get();
             seat.setLocked(true);
             seat.setLockedAt(LocalDateTime.now());
-            return seatRepository.save(seat);
+            seatRepository.save(seat);
         }
-        return null;
     }
 
-    @Override
-    public Seat unlockSeat(String seatNumber) {
-        Optional<Seat> optionalSeat = seatRepository.findBySeatNumber(seatNumber);
-        if (optionalSeat.isPresent()) {
-            Seat seat = optionalSeat.get();
+    public void unlockSeat(String seatNumber) {
+        Optional<Seat> seatOptional = seatRepository.findBySeatNumber(seatNumber);
+        if (seatOptional.isPresent()) {
+            Seat seat = seatOptional.get();
             seat.setLocked(false);
             seat.setLockedAt(null);
-            return seatRepository.save(seat);
+            seatRepository.save(seat);
         }
-        return null;
     }
+
+@Scheduled(fixedRate = 60000) // Runs every minute
+public void unlockExpiredSeats() {
+    List<Seat> lockedSeats = seatRepository.findByLockedTrue();
+    LocalDateTime now = LocalDateTime.now();
+    for (Seat seat : lockedSeats) {
+        if (seat.getLockedAt().plusMinutes(1).isBefore(now)) {
+            seat.setLocked(false);
+            seat.setLockedAt(null);
+            seatRepository.save(seat);
+        }
+    }
+}
+
+
+
 
     @Override
     public Map<String, Boolean> convertSeatsToMap(List<Seat> seats) {
@@ -88,15 +87,30 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
-        return seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+        return null;
     }
 
     @Override
     public void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability) {
-        Flight flight = flightRepository.findByFlightNumber(flightNumber);
-        Seat seat = seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
-        seat.setAvailable(availability);
-        seatRepository.save(seat);
+
     }
+
+    //    @Override
+//    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
+//        return seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+//    }
+//
+//    @Override
+//    public void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability) {
+//        Flight flight = flightRepository.findByFlightNumber(flightNumber);
+//        Seat seat = seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+//        seat.setAvailable(availability);
+//        seatRepository.save(seat);
+//    }
+    @Override
+    public Seat getSeatByNumberAndFlight(String seatNumber, String flightNumber) {
+        return seatRepository.findBySeatNumberAndFlightNumber(seatNumber, flightNumber).orElse(null);
+    }
+
 
 }
