@@ -103,12 +103,12 @@ public class SeatController {
                 .collect(Collectors.toList());
 
         // Check if any of the selected seats are locked and not available
-        for (Seat seat : seats) {
-            if (seat.isLocked() && !seat.isAvailable()) {
-                redirectAttributes.addFlashAttribute("bookingErrorMessage", "One or more selected seats are locked or unavailable.");
-                return "redirect:/seats/flight/" + flightNumber;
-            }
-        }
+//        for (Seat seat : seats) {
+//            if (seat.isLocked() && !seat.isAvailable()) {
+//                redirectAttributes.addFlashAttribute("bookingErrorMessage", "One or more selected seats are locked or unavailable.");
+//                return "redirect:/seats/flight/" + flightNumber;
+//            }
+//        }
 
         // Create Booking object and set booking details
         Booking booking = new Booking();
@@ -121,12 +121,12 @@ public class SeatController {
         bookingService.saveBooking(booking);
 
         // Update seat availability and unlock seats
-        for (Seat seat : seats) {
-            seat.setAvailable(false);
-            seat.setLocked(false);
-            seat.setLockedAt(null);
-            seatService.updateSeat(seat);
-        }
+//        for (Seat seat : seats) {
+//            seat.setAvailable(false);
+//            seat.setLocked(false);
+//            seat.setLockedAt(null);
+//            seatService.updateSeat(seat);
+//        }
 
         redirectAttributes.addFlashAttribute("bookingSuccessMessage", "Your booking has been confirmed!");
         return "redirect:/";

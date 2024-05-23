@@ -10,55 +10,68 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            padding: 20px;
+        margin:0px;
         }
         h2 {
             text-align: center;
             margin-bottom: 20px;
         }
-        .seat-plan {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .seat {
-            width: 50px;
-            height: 50px;
-            margin: 5px;
-            display: inline-block;
-            border: 1px solid darkgray;
-            text-align: center;
-            line-height: 50px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-       .available {
+
+
+.seat-plan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.seat-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.seat {
+    width: 50px; /* Adjust width as needed */
+    height: 50px; /* Adjust height as needed */
+    margin: 5px; /* Adjust margin as needed */
+    display: inline-block;
+    border: 1px solid darkgray; /* Add border */
+    text-align: center;
+    line-height: 50px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Add background colors for different states */
+.available {
     background-color: lightgreen;
 }
-.unavailable{
-    background-color: darkgrey; /* Use dark grey for booked seats */
-    pointer-events: none;
 
-}
 .booked {
     background-color: lightcoral;
 }
+
+.unavailable {
+    background-color: darkgrey;
+}
+
 .fire-exit {
     background-color: orange;
 }
+
+/* Style for selected seats */
+.selected {
+    background-color: lightblue;
+}
+
+
 
         .selected {
             background-color: lightblue;
@@ -97,6 +110,21 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+         .confirm-btn {
+            margin-top: 20px;
+            display: block;
+            width: 200px;
+            padding: 10px;
+            background-color: #707b87;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
         .confirm-button:hover {
             background-color: #0056b3;
         }
@@ -158,6 +186,9 @@
         .modal button:hover {
             background-color: #0056b3;
         }
+        .spacer{
+        width:150px;
+        }
     </style>
 </head>
 <body>
@@ -168,15 +199,24 @@
     <input type="hidden" name="price" id="price" value=""/>
 
     <div class="seat-plan">
-        <div th:each="seat, iterStat : ${seats}">
-            <div th:if="${iterStat.count % 6 == 1}" class="row"></div>
-            <div th:class="'seat ' + (${seat.available == false} ? 'booked' : (${seat.available == true && seat.locked == false} ? 'available' : 'unavailable')) + (${seat.fireExit} ? ' fire-exit' : '')"
-                 th:data-seat-number="${seat.seatNumber}"
-                 th:data-ticket-price="${seat.ticketPrice}"
-                 th:data-locked="${seat.locked}"
-                 th:data-lockedd="${seat.available}"
-                 onclick="selectSeat(this)">
-                <span th:text="${seat.seatNumber}"></span>
+        <!-- Loop to create rows -->
+        <div th:each="rowNumber, iterStat : ${#numbers.sequence(1, seats.size())}"
+             th:if="${iterStat.index % 6 == 1}" class="row">
+            <!-- Loop to create columns for each row -->
+            <div th:each="columnNumber : ${#numbers.sequence(0, 5)}"
+                 th:if="${rowNumber + columnNumber - 1 &lt;= seats.size()}">
+                <!-- Seat box -->
+                <div class="seat-box"
+                     th:class="'seat ' + (${seats[rowNumber + columnNumber - 2].available == false} ? 'booked' : (${seats[rowNumber + columnNumber - 2].available == true && seats[rowNumber + columnNumber - 2].locked == false} ? 'available' : 'unavailable')) + (${seats[rowNumber + columnNumber - 2].fireExit} ? ' fire-exit' : '')"
+                     th:data-seat-number="${seats[rowNumber + columnNumber - 2].seatNumber}"
+                     th:data-ticket-price="${seats[rowNumber + columnNumber - 2].ticketPrice}"
+                     th:data-locked="${seats[rowNumber + columnNumber - 2].locked}"
+                     th:data-lockedd="${seats[rowNumber + columnNumber - 2].available}"
+                     onclick="selectSeat(this)">
+                    <span th:text="${seats[rowNumber + columnNumber - 2].seatNumber}"></span>
+                </div>
+                <!-- Add spacer after every third column -->
+                <div th:if="${(columnNumber + 1) % 3 == 0}" class="spacer"></div>
             </div>
         </div>
     </div>
@@ -184,8 +224,15 @@
 
 
 
+    </div>
+
+
+
+
+
     <input type="hidden" name="selectedSeats" id="selectedSeats" value=""/>
-    <button type="button" class="confirm-button" onclick="showPopup()">Confirm Booking</button>
+    <button type="button" class="confirm-btn" id="proceedButton" disabled onclick="showPopup()">Proceed to Booking</button>
+
 </form>
 
 <div class="legend">
@@ -217,7 +264,7 @@
         <p>Selected Seats: <span id="modalSelectedSeats"></span></p>
         <div>
             <label for="numberOfChildren">Number of Children (15 or younger):</label>
-            <input type="number" id="numberOfChildren" name="numberOfChildren" min="0" required>
+            <input type="number" id="numberOfChildren" name="numberOfChildren" min="0" value="0">
         </div>
 
         <p>Total Price: $<span id="totalPrice"></span></p>
@@ -231,22 +278,39 @@
 <script>
     let selectedSeats = [];
 
-    function selectSeat(seatElement) {
-        if ($(seatElement).hasClass('available')) {
-            if ($(seatElement).hasClass('selected')) {
-                $(seatElement).removeClass('selected');
-                selectedSeats = selectedSeats.filter(seat => seat !== $(seatElement).data('seat-number'));
-                // Unlock the seat on deselection
-            unlockSeat($(seatElement).data('seat-number'))
-            } else {
-                $(seatElement).addClass('selected');
-                selectedSeats.push($(seatElement).data('seat-number'));
-                // Lock the seat on selection
-            lockSeat($(seatElement).data('seat-number'));
-            }
-            $('#selectedSeats').val(selectedSeats.join(','));
+  function selectSeat(seatElement) {
+    if (seatElement.classList.contains('available')) {
+        if (seatElement.classList.contains('selected')) {
+            seatElement.classList.remove('selected');
+            selectedSeats = selectedSeats.filter(seat => seat !== seatElement.dataset.seatNumber);
+            unlockSeat(seatElement.dataset.seatNumber);
+        } else {
+            seatElement.classList.add('selected');
+            selectedSeats.push(seatElement.dataset.seatNumber);
+            lockSeat(seatElement.dataset.seatNumber);
         }
+        document.getElementById('selectedSeats').value = selectedSeats.join(',');
+        updateProceedButtonState();
     }
+}
+
+
+
+
+function updateProceedButtonState() {
+    const proceedButton = document.getElementById('proceedButton');
+    if (selectedSeats.length > 0) {
+        proceedButton.disabled = false;
+        proceedButton.classList.remove('confirm-btn');
+        proceedButton.classList.add('confirm-button');
+    } else {
+        proceedButton.disabled = true;
+        proceedButton.classList.remove('confirm-button');
+        proceedButton.classList.add('confirm-btn');
+    }
+}
+
+
     function lockSeat(seatNumber) {
     const flightNumber = $('#flightNumber').val(); // Get the flight number from the form or a hidden input
     $.ajax({

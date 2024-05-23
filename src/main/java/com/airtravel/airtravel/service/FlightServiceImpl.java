@@ -76,32 +76,47 @@ public List<Flight> getAllFlights() {
     private void generateSeatsForFlight(Flight flight) {
         // Retrieve the ticket price for the flight
         double ticketPrice = flight.getTicketPrice();
-        // Determine number of seats based on flight number (e.g., B100 -> 30 seats, B200 -> 40 seats)
+
+        // Determine number of seats based on flight number (e.g., B100 -> 55 seats, B200 -> 80 seats)
         int numSeats = 0;
         if (flight.getFlightNumber().equals("B100")) {
-            numSeats = 30;
+            numSeats = 66;
         } else if (flight.getFlightNumber().equals("B200")) {
-            numSeats = 40;
-        }else {
+            numSeats = 84;
+        } else {
             numSeats = 25;
         }
 
         // Generate seats
         List<Seat> seats = new ArrayList<>();
-        for (int i = 1; i <= numSeats; i++) {
-            Seat seat = new Seat();
-            seat.setSeatNumber("Seat " + i);
-            seat.setAvailable(true); // Initially, all seats are available
-            seat.setFlight(flight);
-            seat.setFlightNumber(flight.getFlightNumber());
-            seat.setTicketPrice(ticketPrice); // Set the ticket price for each seat
-            // Set other seat properties (e.g., class, locked, etc.)
-            seats.add(seat);
+        int numSeatsPerRow = 6; // Number of seats per row (A to F)
+
+        // Calculate the total number of rows needed
+        int numSeatRows = (int) Math.ceil((double) numSeats / numSeatsPerRow);
+
+        for (int row = 1; row <= numSeatRows; row++) {
+            for (char seatLetter = 'A'; seatLetter <= 'F'; seatLetter++) {
+                if ((row - 1) * numSeatsPerRow + (seatLetter - 'A' + 1) > numSeats) {
+                    break; // Exit if total number of seats is reached
+                }
+
+                Seat seat = new Seat();
+                String seatNumber = row + String.valueOf(seatLetter);
+                seat.setSeatNumber(seatNumber);
+                seat.setAvailable(true); // Initially, all seats are available
+                seat.setFlight(flight);
+                seat.setFlightNumber(flight.getFlightNumber());
+                seat.setTicketPrice(ticketPrice); // Set the ticket price for each seat
+                // Set other seat properties (e.g., class, locked, etc.)
+                seats.add(seat);
+            }
         }
 
         // Save seats
         seatRepository.saveAll(seats);
     }
+
+
 
 
     private int determineNumberOfSeats(String flightNumber) {
