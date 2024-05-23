@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Flight</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+</head>
+<body>
+<div th:replace="navbar"></div>
+
+<div class="container mt-5">
+    <h2>Edit Flight</h2>
+    <form action="/admin/edit-flight" method="post">
+        <input type="hidden" name="id" th:value="${flight.id}"/>
+        <div class="form-group">
+            <label for="flightNumber">Flight Number:</label>
+            <input type="text" id="flightNumber" name="flightNumber" class="form-control" th:value="${flight.flightNumber}" disabled>
+        </div>
+        <div class="form-group">
+            <label for="departureDate">Departure Date:</label>
+            <input type="datetime-local" id="departureDate" name="departureDate" class="form-control" th:value="${flight.departureDate}" required>
+        </div>
+        <div class="form-group">
+            <label for="from">From:</label>
+            <input type="text" id="from" name="from" class="form-control" th:value="${flight.from}" required>
+        </div>
+        <div class="form-group">
+            <label for="to">To:</label>
+            <input type="text" id="to" name="to" class="form-control" th:value="${flight.to}" required>
+        </div>
+        <div class="form-group">
+            <label for="ticketPrice">Ticket Price:</label>
+            <input type="number" id="ticketPrice" name="ticketPrice" class="form-control" th:value="${flight.ticketPrice}" required>
+        </div>
+        <div class="form-group">
+            <label for="availableSeats">Available Seats:</label>
+            <input type="number" id="availableSeats" name="availableSeats" class="form-control" th:value="${flight.availableSeats}" required>
+        </div>
+        <div class="form-group">
+            <label for="class">Class:</label>
+            <select id="class" name="class" class="form-control" th:value="${flight.flightClass}">
+                <option value="economy">Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First Class</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Flight</button>
+    </form>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

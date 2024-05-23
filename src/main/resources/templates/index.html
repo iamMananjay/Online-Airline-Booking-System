@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirTravel</title>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+</head>
+<body>
+<!-- Include navigation bar -->
+<div th:replace="navbar"></div>
+
+<!-- Image slider section -->
+<div class="slider-container">
+    <div class="slider">
+        <img src="css/image/image1.jpg" alt="Image 1" class="slide">
+        <img src="css/image/image2.jpg" alt="Image 2" class="slide">
+        <img src="css/image/image3.jpg" alt="Image 3" class="slide">
+        <!-- Add more images as needed -->
+    </div>
+
+    <!-- Flight search section -->
+    <div class="search-box">
+        <h2>Search Flights</h2>
+        <form action="/search-flights" method="GET">
+            <label for="from">From:</label>
+            <input type="text" id="from" name="departureAirport" required> <!-- Change 'from' to 'departureAirport' -->
+            <label for="to">To:</label>
+            <input type="text" id="to" name="destinationAirport" required> <!-- Change 'to' to 'destinationAirport' -->
+            <label for="class">Class:</label>
+            <select id="class" name="class">
+                <option value="economy">Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First Class</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+
+        <div th:if="${bookingSuccessMessage}" class="booking-success-message" id="bookingSuccessMessage">
+            <span th:text="${bookingSuccessMessage}"></span>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/css/javascript/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+</body>
+</html>

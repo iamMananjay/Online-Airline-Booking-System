@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Search Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+</head>
+<body>
+<div th:replace="navbar"></div>
+<div class="container mt-5">
+    <h2>Flight Search Results</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Departure Date</th>
+            <th scope="col">From</th>
+            <th scope="col">To</th>
+            <th scope="col">Ticket Price</th>
+            <th scope="col">Available Seats</th>
+            <th scope="col">Flight Number</th> <!-- Add flight number column -->
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="flight : ${flights}">
+            <td th:text="${flight.departureDatetime}"></td>
+            <td th:text="${flight.departureAirport}"></td>
+            <td th:text="${flight.destinationAirport}"></td>
+            <td th:text="${flight.ticketPrice}"></td>
+            <td th:text="${flight.totalSeats - flight.bookings.size()}"></td> <!-- Calculate available seats -->
+            <td th:text="${flight.flightNumber}"></td>
+            <td>
+                <a th:href="@{'/seats/flight/' + ${flight.flightId}}" class="btn btn-primary">View Seats</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

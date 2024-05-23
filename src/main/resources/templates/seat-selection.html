@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .seat-plan {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .seat {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            display: inline-block;
+            border: 1px solid darkgray;
+            text-align: center;
+            line-height: 50px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .available {
+            background-color: lightgreen;
+        }
+        .unavailable {
+            background-color: lightcoral;
+            pointer-events: none;
+        }
+        .fire-exit {
+            background-color: orange;
+        }
+        .selected {
+            background-color: lightblue;
+        }
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border: 1px solid darkgray;
+        }
+        .confirm-button {
+            margin-top: 20px;
+            display: block;
+            width: 200px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .confirm-button:hover {
+            background-color: #0056b3;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal h2 {
+            margin-top: 0;
+        }
+        .modal p {
+            font-size: 16px;
+        }
+        .modal div {
+            margin-bottom: 15px;
+        }
+        .modal button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .modal button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="navbar"></div>
+<h2>Seat Selection</h2>
+<form id="seatForm" action="/seats/flight/book" method="post">
+
+    <input type="hidden" name="flightNumber" id="flightNumber" th:value="${seats[0].flightNumber}" />
+    <input type="hidden" name="price" id="price" value=""/>
+
+    <div class="seat-plan">
+        <div th:each="seat, iterStat : ${seats}">
+            <div th:if="${iterStat.count % 6 == 1}" class="row"></div>
+            <div th:class="'seat ' + (${seat.available} ? 'available' : 'unavailable') + ' ' + (${seat.fireExit} ? 'fire-exit' : '')"
+                 th:data-seat-number="${seat.seatNumber}"
+                 th:data-ticket-price="${seat.ticketPrice}"
+            onclick="selectSeat(this)">
+                <span th:text="${seat.seatNumber}"></span>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="selectedSeats" id="selectedSeats" value=""/>
+    <button type="button" class="confirm-button" onclick="showPopup()">Confirm Booking</button>
+</form>
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-box" style="background-color: lightgreen;"></div>
+        <span>Available</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-box" style="background-color: lightcoral;"></div>
+        <span>Unavailable</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-box" style="background-color: orange;"></div>
+        <span>Fire Exit</span>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <h2>Booking Details</h2>
+        <p>Flight Number: <span id="modalFlightNumber"></span></p>
+        <p>Selected Seats: <span id="modalSelectedSeats"></span></p>
+        <div>
+            <label for="numberOfChildren">Number of Children (15 or younger):</label>
+            <input type="number" id="numberOfChildren" name="numberOfChildren" min="0" required>
+        </div>
+
+        <p>Total Price: $<span id="totalPrice"></span></p>
+        <p>Discount Amount: $<span id="discountAmount"></span></p> <!-- Add this line -->
+        <p>Total Price (with Discount): $<span id="totalPriceWithDiscount"></span></p> <!-- Add this line -->
+        <button type="button" onclick="confirmBooking()">Confirm</button>
+
+    </div>
+</div>
+
+<script>
+    let selectedSeats = [];
+
+    function selectSeat(seatElement) {
+        if ($(seatElement).hasClass('available')) {
+            if ($(seatElement).hasClass('selected')) {
+                $(seatElement).removeClass('selected');
+                selectedSeats = selectedSeats.filter(seat => seat !== $(seatElement).data('seat-number'));
+            } else {
+                $(seatElement).addClass('selected');
+                selectedSeats.push($(seatElement).data('seat-number'));
+            }
+            $('#selectedSeats').val(selectedSeats.join(','));
+        }
+    }
+
+    function showPopup() {
+        const flightNumber = $('#flightNumber').val();
+        $('#modalFlightNumber').text(flightNumber);
+        $('#modalSelectedSeats').text(selectedSeats.join(', '));
+        $('#bookingModal').css('display', 'block');
+        updateTotalPrice();
+    }
+
+    function closePopup() {
+        $('#bookingModal').css('display', 'none');
+    }
+
+    function updateTotalPrice() {
+        const numberOfChildren = $('#numberOfChildren').val();
+        const totalPrice = calculateTotalPrice();
+        const discountAmount = calculateDiscountAmount();
+        const totalPriceWithDiscount = totalPrice - discountAmount;
+        $('#totalPrice').text(totalPrice.toFixed(2));
+        $('#discountAmount').text(discountAmount.toFixed(2));
+        $('#totalPriceWithDiscount').text(totalPriceWithDiscount.toFixed(2));
+        $('#price').val(totalPrice.toFixed(2));
+    }
+
+    function calculateTotalPrice() {
+        let totalPrice = 0;
+        selectedSeats.forEach(seatNumber => {
+            const seatElement = $(`.seat[data-seat-number="${seatNumber}"]`);
+            const ticketPrice = parseFloat(seatElement.data('ticket-price'));
+            totalPrice += ticketPrice;
+        });
+        return totalPrice;
+    }
+
+    function calculateDiscountAmount() {
+        const numberOfChildren = $('#numberOfChildren').val();
+        const totalPrice = calculateTotalPrice();
+        const discountAmount = numberOfChildren * totalPrice * 0.25;
+        return discountAmount;
+    }
+
+    $('#numberOfChildren').on('input', updateTotalPrice);
+
+    function confirmBooking() {
+        const numberOfChildren = $('#numberOfChildren').val();
+        if (numberOfChildren > 0) {
+            const numberOfSeats = selectedSeats.length;
+            if (numberOfSeats < numberOfChildren) {
+                toastr.warning("Number of children exceeds the selected seats.");
+                return;
+            }
+
+            const seatNumbers = selectedSeats.map(seat => parseInt(seat.replace(/[^\d]/g, ''))).sort((a, b) => a - b);
+            for (let i = 1; i < seatNumbers.length; i++) {
+                if (seatNumbers[i] - seatNumbers[i - 1] > 1) {
+                    toastr.warning("Children must be seated next to a guardian.");
+                    return;
+                }
+            }
+        }
+
+        $.ajax({
+            url: "/api/authenticated",
+            method: "GET",
+            success: function(isAuthenticated) {
+                if (isAuthenticated) {
+                    $('#seatForm').append(`<input type="hidden" name="numberOfChildren" value='${numberOfChildren}' />`);
+                    $('#seatForm').submit();
+                } else {
+                    toastr.warning("You need to be logged in to confirm your booking.");
+                    setTimeout(function() {
+                        window.location.href = "/login?message=login_required";
+                    }, 3000);
+                }
+            },
+            error: function() {
+                alert("An error occurred while checking authentication.");
+            }
+        });
+    }
+</script>
+</body>
+</html>
+

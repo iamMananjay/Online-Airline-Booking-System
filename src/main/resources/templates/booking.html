@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking</title>
+    <link rel="stylesheet" type="text/css" href="/css/booksystem.css">
+</head>
+<body>
+<h1>Flight Booking</h1>
+<div id="seating-plan">
+    <!-- Seating plan will be populated here by JavaScript -->
+    <p>booking</p>
+</div>
+<button id="confirm-booking" onclick="confirmBooking()">Confirm Booking</button>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const flightId = urlParams.get('flightId');
+
+    // Fetch seating plan from the server
+    fetch(`/api/flights/${flightId}/seats`)
+        .then(response => response.json())
+        .then(seats => {
+            const seatingPlan = document.getElementById('seating-plan');
+            seats.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('row');
+                row.forEach(seat => {
+                    const seatDiv = document.createElement('div');
+                    seatDiv.classList.add('seat');
+                    seatDiv.innerText = seat.seatNumber;
+                    if (seat.isBooked) {
+                        seatDiv.classList.add('booked');
+                    } else {
+                        seatDiv.addEventListener('click', () => selectSeat(seat.seatNumber));
+                    }
+                    rowDiv.appendChild(seatDiv);
+                });
+                seatingPlan.appendChild(rowDiv);
+            });
+        });
+
+    let selectedSeats = [];
+
+    function selectSeat(seatNumber) {
+        const seatDiv = document.querySelector(`.seat:contains(${seatNumber})`);
+        if (seatDiv.classList.contains('selected')) {
+            seatDiv.classList.remove('selected');
+            selectedSeats = selectedSeats.filter(seat => seat !== seatNumber);
+        } else {
+            seatDiv.classList.add('selected');
+            selectedSeats.push(seatNumber);
+        }
+    }
+
+    function confirmBooking() {
+        const bookingDetails = {
+            flightId: flightId,
+            seats: selectedSeats
+        };
+        fetch('/api/bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookingDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Booking confirmed!');
+            window.location.href = '/dashboard.html';
+        })
+        .catch(error => {
+            alert('Error booking seats. Please try again.');
+            console.error('Error:', error);
+        });
+    }
+</script>
+</body>
+</html>

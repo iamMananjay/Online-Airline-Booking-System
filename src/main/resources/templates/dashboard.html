@@ -1,16 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>Flight List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/nav.css">
 </head>
 <body>
-<div class="container">
-    <h2>Welcome to the Dashboard</h2>
-    <p>This is your dashboard. You can customize this page to display user-specific information and actions.</p>
-    <a href="/logout">Logout</a>
+<div th:replace="navbar"></div>
+<div class="container mt-5">
+    <h2>Flight List</h2>
+    <a href="admin/add-flight" class="btn btn-primary mb-3">Add Flight</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Flight ID</th>
+            <th scope="col">Departure Airport</th>
+            <th scope="col">Destination Airport</th>
+            <th scope="col">Departure Date</th>
+            <th scope="col">Arrival Date</th>
+            <th scope="col">Ticket Price</th>
+            <th scope="col">Total Seats</th>
+            <th scope="col">Action</th>
+
+            <!--            <th scope="col">Bookings</th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="flight : ${flights}">
+            <td th:text="${flight.flightId}"></td>
+            <td th:text="${flight.departureAirport}"></td>
+            <td th:text="${flight.destinationAirport}"></td>
+            <td th:text="${flight.departureDatetime}"></td>
+            <td th:text="${flight.arrivalDatetime}"></td>
+            <td th:text="${flight.ticketPrice}"></td>
+            <td th:text="${flight.totalSeats}"></td>
+            <td>
+                <a th:href="@{/admin/edit-flight/{flightId}(flightId=${flight.flightId})}" class="btn btn-warning">Edit</a>
+                <a th:href="@{/admin/delete-flight/{flightId}(flightId=${flight.flightId})}" class="btn btn-danger">Delete</a>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
 </div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

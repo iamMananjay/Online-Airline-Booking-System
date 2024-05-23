@@ -1,7 +1,9 @@
 package com.airtravel.airtravel.controller;
 
 
+import com.airtravel.airtravel.model.Flight;
 import com.airtravel.airtravel.model.User;
+import com.airtravel.airtravel.service.FlightService;
 import com.airtravel.airtravel.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +14,25 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 
 @Controller
 public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
+    private FlightService flightService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/")
+    public String index() {
+        return "index"; // Assuming you have a home.html template
+    }
+
 
     @PostMapping("/register")
     public String register(@ModelAttribute("user") User user) {
@@ -50,9 +64,22 @@ public class UserController {
         return "register"; // Assuming you have a register.html template
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard"; // Assuming you have a dashboard.html template
-    }
+//
+@GetMapping("/dashboard")
+public String dashboard(Model model) {
+    List<Flight> flights = flightService.getAllFlights();
+
+    // Format departureDatetime before passing to the template
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    flights.forEach(flight -> flight.setFormattedDepartureDate(flight.getDepartureDatetime().format(formatter)));
+
+    model.addAttribute("flights", flights);
+    return "dashboard"; // Redirect to flights list
+}
+
+
+
+
+
 }
 

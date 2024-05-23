@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Flight</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+</head>
+<body>
+<div th:replace="navbar"></div>
+<div class="container mt-5">
+    <h2>Add Flight</h2>
+    <form action="/admin/add-flight" method="post">
+        <div class="form-group">
+            <label for="flightNumber">Flight Number</label>
+            <input type="text" class="form-control" id="flightNumber" name="flightNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="departureAirport">Departure Airport</label>
+            <input type="text" class="form-control" id="departureAirport" name="departureAirport" required>
+        </div>
+        <div class="form-group">
+            <label for="destinationAirport">Destination Airport</label>
+            <input type="text" class="form-control" id="destinationAirport" name="destinationAirport" required>
+        </div>
+        <div class="form-group">
+            <label for="departureDatetime">Departure Date and Time</label>
+            <input type="datetime-local" class="form-control" id="departureDatetime" name="departureDatetime" required>
+        </div>
+        <div class="form-group">
+            <label for="arrivalDatetime">Arrival Date and Time</label>
+            <input type="datetime-local" class="form-control" id="arrivalDatetime" name="arrivalDatetime" required>
+        </div>
+        <div class="form-group">
+            <label for="ticketPrice">Ticket Price</label>
+            <input type="number" class="form-control" id="ticketPrice" name="ticketPrice" required>
+        </div>
+        <div class="form-group">
+            <label for="availableSeats">Available Seats</label>
+            <input type="number" class="form-control" id="availableSeats" name="availableSeats" required>
+        </div>
+        <div class="form-group">
+            <label for="class">Class</label>
+            <select id="class" name="class" class="form-control">
+                <option value="economy">Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First Class</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Flight</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.airtravel.airtravel.security;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +28,14 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity; not recommended for production
+                .csrf(csrf -> csrf.disable())
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/login", "/register", "/index", "/css/**").permitAll() // Permit access to CSS files
+                        .requestMatchers("/", "/login", "/register", "/index", "/css/**","/add-flight","/search-flights").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/add-flight").permitAll()
+                        .requestMatchers("/seats/**").permitAll()
+                        .requestMatchers("/seats/flight/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -40,12 +46,11 @@ public class SpringSecurity {
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/")
                         .permitAll()
                 );
         return http.build();
     }
-
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,3 +59,4 @@ public class SpringSecurity {
                 .passwordEncoder(passwordEncoder());
     }
 }
+
