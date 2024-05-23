@@ -60,21 +60,26 @@ public class SeatController {
     @PostMapping("/flight/book")
     public String bookSeats(@RequestParam("flightNumber") String flightNumber,
                             @RequestParam("selectedSeats") List<String> selectedSeats,
-                            @RequestParam("numberOfChildren") int numberOfChildren, @RequestParam("price") double price,
+                            @RequestParam("numberOfChildren") int numberOfChildren,
+                            @RequestParam("price") double price,
                             RedirectAttributes redirectAttributes) {
 
+        // Requirement 1: Limit on Booking Seats
         // Server-side validation to ensure no more than 6 seats are booked at once
         if (selectedSeats.size() > 6) {
             redirectAttributes.addFlashAttribute("bookingErrorMessage", "You can only book up to 6 seats at once.");
             return "redirect:/seats/flight/" + flightNumber;
         }
 
+        // Requirement 2: Discount for Children
         if (numberOfChildren > 0) {
+            // Validate if the number of children exceeds the selected seats
             if (selectedSeats.size() < numberOfChildren) {
                 redirectAttributes.addFlashAttribute("bookingErrorMessage", "Number of children exceeds the selected seats.");
                 return "redirect:/seats/flight/" + flightNumber;
             }
 
+            // Validate if children are seated next to a guardian
             List<Integer> seatNumbers = selectedSeats.stream()
                     .map(seat -> Integer.parseInt(seat.replaceAll("[^\\d]", "")))
                     .sorted()
@@ -110,6 +115,7 @@ public class SeatController {
         booking.setBookingDateTime(LocalDateTime.now()); // Set booking date and time
         bookingService.saveBooking(booking);
 
+        // Update seat availability
         for (Seat seat : seats) {
             seatService.updateSeatAvailability(flightNumber, seat.getSeatNumber(), false);
         }
@@ -117,6 +123,7 @@ public class SeatController {
         redirectAttributes.addFlashAttribute("bookingSuccessMessage", "Your booking has been confirmed!");
         return "redirect:/";
     }
+
 
 
 

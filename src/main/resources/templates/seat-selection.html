@@ -229,11 +229,19 @@
     }
 
     function showPopup() {
-        const flightNumber = $('#flightNumber').val();
-        $('#modalFlightNumber').text(flightNumber);
-        $('#modalSelectedSeats').text(selectedSeats.join(', '));
-        $('#bookingModal').css('display', 'block');
-        updateTotalPrice();
+    const numberOfSeats = selectedSeats.length;
+          // Check if the number of selected seats exceeds 6
+        if (numberOfSeats > 6) {
+            toastr.warning("You can only book up to 6 seats at once.");
+            return;
+        }else{
+            const flightNumber = $('#flightNumber').val();
+            $('#modalFlightNumber').text(flightNumber);
+            $('#modalSelectedSeats').text(selectedSeats.join(', '));
+            $('#bookingModal').css('display', 'block');
+            updateTotalPrice();
+        }
+
     }
 
     function closePopup() {
@@ -271,42 +279,47 @@
     $('#numberOfChildren').on('input', updateTotalPrice);
 
     function confirmBooking() {
-        const numberOfChildren = $('#numberOfChildren').val();
-        if (numberOfChildren > 0) {
-            const numberOfSeats = selectedSeats.length;
-            if (numberOfSeats < numberOfChildren) {
-                toastr.warning("Number of children exceeds the selected seats.");
-                return;
-            }
+    const numberOfChildren = $('#numberOfChildren').val();
+    const numberOfSeats = selectedSeats.length;
 
-            const seatNumbers = selectedSeats.map(seat => parseInt(seat.replace(/[^\d]/g, ''))).sort((a, b) => a - b);
-            for (let i = 1; i < seatNumbers.length; i++) {
-                if (seatNumbers[i] - seatNumbers[i - 1] > 1) {
-                    toastr.warning("Children must be seated next to a guardian.");
-                    return;
-                }
-            }
-        }
 
-        $.ajax({
-            url: "/api/authenticated",
-            method: "GET",
-            success: function(isAuthenticated) {
-                if (isAuthenticated) {
-                    $('#seatForm').append(`<input type="hidden" name="numberOfChildren" value='${numberOfChildren}' />`);
-                    $('#seatForm').submit();
-                } else {
-                    toastr.warning("You need to be logged in to confirm your booking.");
-                    setTimeout(function() {
-                        window.location.href = "/login?message=login_required";
-                    }, 3000);
-                }
-            },
-            error: function() {
-                alert("An error occurred while checking authentication.");
-            }
-        });
+
+    // Check if the number of children exceeds the selected seats
+    if (numberOfChildren > 0 && numberOfSeats < numberOfChildren) {
+        toastr.warning("Number of children exceeds the selected seats.");
+        return;
     }
+
+    // Check if children are seated next to a guardian
+    const seatNumbers = selectedSeats.map(seat => parseInt(seat.replace(/[^\d]/g, ''))).sort((a, b) => a - b);
+    for (let i = 1; i < seatNumbers.length; i++) {
+        if (seatNumbers[i] - seatNumbers[i - 1] > 1) {
+            toastr.warning("Children must be seated next to a guardian.");
+            return;
+        }
+    }
+
+    // Proceed with booking
+    $.ajax({
+        url: "/api/authenticated",
+        method: "GET",
+        success: function(isAuthenticated) {
+            if (isAuthenticated) {
+                $('#seatForm').append(`<input type="hidden" name="numberOfChildren" value='${numberOfChildren}' />`);
+                $('#seatForm').submit();
+            } else {
+                toastr.warning("You need to be logged in to confirm your booking.");
+                setTimeout(function() {
+                    window.location.href = "/login?message=login_required";
+                }, 3000);
+            }
+        },
+        error: function() {
+            alert("An error occurred while checking authentication.");
+        }
+    });
+}
+
 </script>
 </body>
 </html>
