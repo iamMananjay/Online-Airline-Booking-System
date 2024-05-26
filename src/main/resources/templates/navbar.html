@@ -1,9 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyHigh Airways</title>
+    <link rel="stylesheet" href="css/nav.css">
+</head>
+<body>
 <nav>
-    <!-- Logo wrapped in an anchor tag to make it clickable -->
-    <a href="/">
-        <img src="css/image/logo.png" alt="AirTravel Logo">
+    <!-- Airline name centered with clickable link -->
+    <a href="/" class="airline-name">
+        <span class="sky">Sky</span><span class="high">High Airways</span>
     </a>
     <!-- Buttons for Login and Register -->
-    <button onclick="location.href='/login'">Login</button>
-    <button onclick="location.href='/register'">Register</button>
+    <div class="nav-buttons">
+        <button onclick="location.href='/login'">Login</button>
+        <button onclick="location.href='/register'">Register</button>
+    </div>
 </nav>
+</body>
+</html>

@@ -5,10 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Search Results</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Custom CSS for styling the navbar */
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+            font-family: Arial, sans-serif; /* Use a sans-serif font */
+        }
+
+        .navbar {
+            background-color: #343a40 !important; /* Dark background color for navbar */
+        }
+
+        .navbar-brand {
+            color: #fff !important; /* White text color for navbar brand */
+            font-weight: bold; /* Make navbar brand text bold */
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff !important; /* White text color for navbar links */
+            font-weight: bold; /* Make navbar links text bold */
+        }
+
+        .container {
+            background-color: #fff; /* White container background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); /* Add shadow effect */
+            margin-top: 50px;
+        }
+
+        h2 {
+            color: #007bff; /* Blue heading color */
+            font-weight: bold; /* Make heading bold */
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd; /* Add bottom border */
+        }
+
+        th {
+            background-color: #f2f2f2; /* Light gray background for table header */
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Blue button color */
+            border: none;
+            border-radius: 5px;
+            padding: 8px 20px;
+            color: #fff; /* White text color */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .quote {
+            font-style: italic;
+            margin-top: 50px;
+            text-align: center;
+            color: #6c757d; /* Gray text color for quote */
+        }
+    </style>
 </head>
 <body>
-<div th:replace="navbar"></div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">SkyHigh Airways</a>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/userdetail"><i class="fas fa-user"></i> Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div class="container mt-5">
     <h2>Flight Search Results</h2>
     <table class="table table-striped">

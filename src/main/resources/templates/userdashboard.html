@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity (last value) */
+    background-image: url('css/image/image3.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+        /* Custom CSS for styling the search box and button */
+        .form-group {
+            margin-bottom: 20px; /* Increase space between form groups */
+        }
+
+        .form-group label {
+            color: #fff; /* Set label color to white */
+        }
+
+        .form-group input[type="text"],
+        .form-group select {
+            background-color: rgba(255, 255, 255, 0.7); /* Add semi-transparent white background */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Add border radius */
+            padding: 10px; /* Add padding */
+            width: 100%; /* Ensure full width */
+        }
+
+        /* Style the search button */
+        .btn-primary {
+            background-color: #007bff; /* Set primary button color */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Add border radius */
+            padding: 10px 20px; /* Add padding */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darken button color on hover */
+        }
+         .quote {
+            font-style: italic;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity (last value) */
+    z-index: 1; /* Ensure the overlay is above other elements */
+}
+
+    </style>
+</head>
+<body style="background-image: url('css/image/image3.jpg'); background-repeat: no-repeat; background-size: cover;">
+<div class="overlay">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">SkyHigh Airways</a>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/userdetail"><i class="fas fa-user"></i> Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main content -->
+<div class="container mt-5">
+    <h2 style="color: #fff;">Search Flights</h2>
+    <form action="/search-flights" method="GET">
+        <div class="form-group">
+            <label for="from">From:</label>
+            <input type="text" id="from" name="departureAirport" required>
+        </div>
+        <div class="form-group">
+            <label for="to">To:</label>
+            <input type="text" id="to" name="destinationAirport" required>
+        </div>
+        <div class="form-group">
+            <label for="class">Class:</label>
+            <select id="class" name="class">
+                <option value="economy">Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First Class</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+<div class="quote">
+    <p>A journey that gives you a smile</p>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

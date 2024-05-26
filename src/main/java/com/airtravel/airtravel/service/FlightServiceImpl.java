@@ -94,12 +94,17 @@ public List<Flight> getAllFlights() {
         // Calculate the total number of rows needed
         int numSeatRows = (int) Math.ceil((double) numSeats / numSeatsPerRow);
 
+        // Maintain a counter for the number of seats generated
+        int seatCount = 0;
+
         for (int row = 1; row <= numSeatRows; row++) {
             for (char seatLetter = 'A'; seatLetter <= 'F'; seatLetter++) {
-                if ((row - 1) * numSeatsPerRow + (seatLetter - 'A' + 1) > numSeats) {
-                    break; // Exit if total number of seats is reached
+                // Exit loop if total number of seats is reached
+                if (seatCount >= numSeats) {
+                    break;
                 }
 
+                // Create a seat
                 Seat seat = new Seat();
                 String seatNumber = row + String.valueOf(seatLetter);
                 seat.setSeatNumber(seatNumber);
@@ -109,12 +114,14 @@ public List<Flight> getAllFlights() {
                 seat.setTicketPrice(ticketPrice); // Set the ticket price for each seat
                 // Set other seat properties (e.g., class, locked, etc.)
                 seats.add(seat);
+                seatCount++;
             }
         }
 
         // Save seats
         seatRepository.saveAll(seats);
     }
+
 
 
 

@@ -22,7 +22,9 @@ public class Flight {
     private LocalDateTime arrivalDatetime;
 
     private double ticketPrice;
+    @Column(name = "total_seats")
     private int totalSeats;
+
 
 
     @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

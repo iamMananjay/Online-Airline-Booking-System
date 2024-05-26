@@ -1,52 +1,114 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight List</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Center the airline name */
+     .airline-name {
+         display: block;
+         text-align: center;
+         font-size: 24px; /* Adjust the font size as needed */
+         color: white;
+         text-decoration: none;
+     }
+
+     /* Style for sidebar */
+     .sidebar {
+         height: calc(100% - 64px); /* Adjust for navbar height */
+         width: 200px;
+         position: fixed;
+         top: 64px; /* Adjust for navbar height */
+         left: 0;
+         background-color: #f8f9fa;
+         padding-top: 20px;
+     }
+
+     .sidebar a {
+         padding: 10px 15px;
+         text-decoration: none;
+         display: block;
+         color: #333;
+         transition: background-color 0.3s;
+     }
+
+     .sidebar a:hover {
+         background-color: #ddd;
+     }
+
+     .sidebar h3 {
+         padding: 20px 15px;
+         margin: 0;
+         font-size: 18px;
+         color: #007bff;
+         border-bottom: 1px solid #ccc;
+     }
+
+     .sidebar img {
+         margin: auto; /* Center the logo */
+         display: block; /* To prevent stretching */
+         max-width: 80%; /* Adjust the size of the logo */
+         margin-bottom: 20px; /* Add some space below the logo */
+     }
+
+     /* Main content */
+     .main-content {
+         padding: 20px;
+         margin-left: 200px; /* Adjust for sidebar width */
+     }
+
+     nav {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         background-color: #333;
+         padding: 10px 20px;
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         position: relative;
+         height: 60px; /* Adjusted height */
+     }
+
+
+    </style>
 </head>
 <body>
-<div th:replace="navbar"></div>
-<div class="container mt-5">
-    <h2>Flight List</h2>
-    <a href="admin/add-flight" class="btn btn-primary mb-3">Add Flight</a>
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">Flight ID</th>
-            <th scope="col">Departure Airport</th>
-            <th scope="col">Destination Airport</th>
-            <th scope="col">Departure Date</th>
-            <th scope="col">Arrival Date</th>
-            <th scope="col">Ticket Price</th>
-            <th scope="col">Total Seats</th>
-            <th scope="col">Action</th>
+<nav>
+    <!-- Airline name centered with clickable link -->
+    <a href="/" class="airline-name">
+        <span class="sky">Sky</span><span class="high">High Airways</span>
+    </a>
+</nav>
 
-            <!--            <th scope="col">Bookings</th>-->
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="flight : ${flights}">
-            <td th:text="${flight.flightId}"></td>
-            <td th:text="${flight.departureAirport}"></td>
-            <td th:text="${flight.destinationAirport}"></td>
-            <td th:text="${flight.departureDatetime}"></td>
-            <td th:text="${flight.arrivalDatetime}"></td>
-            <td th:text="${flight.ticketPrice}"></td>
-            <td th:text="${flight.totalSeats}"></td>
-            <td>
-                <a th:href="@{/admin/edit-flight/{flightId}(flightId=${flight.flightId})}" class="btn btn-warning">Edit</a>
-                <a th:href="@{/admin/delete-flight/{flightId}(flightId=${flight.flightId})}" class="btn btn-danger">Delete</a>
-            </td>
-
-        </tr>
-        </tbody>
-    </table>
+<!-- Sidebar -->
+<div class="sidebar">
+    <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="/manage-flights"><i class="fas fa-plane"></i> Manage Flights</a>
+    <a href="/manage-users"><i class="fas fa-users"></i> Manage Users</a>
+    <a href="/manage-users"><i class="fas fa-users"></i> Manage Staff</a>
+    <a href="/" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
+
+
+
+<!-- Main content -->
+<div class="main-content">
+    <div class="container mt-5">
+        <div class="row justify-content-center"> <!-- Center the content -->
+            <div class="col-md-8">
+                <h3 class="text-center">Welcome to SkyHigh Airways Dashboard</h3>
+                <!-- Your table content goes here -->
+            </div>
+        </div>
+    </div>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
+

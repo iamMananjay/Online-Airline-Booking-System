@@ -63,19 +63,41 @@ public class UserController {
     public String register() {
         return "register"; // Assuming you have a register.html template
     }
+    @GetMapping("/userdashboard")
+    public String userdashboard() {
+        return "userdashboard"; // Assuming you have a register.html template
+    }
 
-//
+
+
+
 @GetMapping("/dashboard")
 public String dashboard(Model model) {
-    List<Flight> flights = flightService.getAllFlights();
 
-    // Format departureDatetime before passing to the template
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-    flights.forEach(flight -> flight.setFormattedDepartureDate(flight.getDepartureDatetime().format(formatter)));
-
-    model.addAttribute("flights", flights);
     return "dashboard"; // Redirect to flights list
 }
+
+
+    @GetMapping("/userdetail")
+    public String userdetail(Model model) {
+
+        return "userdetail"; // Redirect to flights list
+    }
+
+    //
+    @GetMapping("/manage-flights")
+    public String manageFlight(Model model) {
+        List<Flight> flights = flightService.getAllFlights();
+
+        // Format departureDatetime before passing to the template
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        flights.forEach(flight -> flight.setFormattedDepartureDate(flight.getDepartureDatetime().format(formatter)));
+
+        model.addAttribute("flights", flights);
+        return "manage-flights"; // Redirect to flights list
+    }
+
+
 
 
 

@@ -5,52 +5,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Flight</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/nav.css">
+    <style>
+        /* Style for sidebar */
+        /* Style for sidebar */
+     .sidebar {
+         height: calc(100% - 64px); /* Adjust for navbar height */
+         width: 200px;
+         position: fixed;
+         top: 64px; /* Adjust for navbar height */
+         left: 0;
+         background-color: #f8f9fa;
+         padding-top: 20px;
+     }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar h3 {
+            padding: 20px 15px;
+            margin: 0;
+            font-size: 18px;
+            color: #007bff;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 200px; /* Adjust for sidebar width */
+            padding: 20px;
+            overflow-y: auto; /* Allow main content to scroll if content exceeds height */
+        }
+
+        .airline-name {
+            display: block;
+            text-align: center;
+            font-size: 24px; /* Adjust the font size as needed */
+            color: white;
+            text-decoration: none;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000; /* Ensure navbar appears above other content */
+            background-color: #333;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 60px; /* Adjusted height */
+        }
+    </style>
 </head>
 <body>
-<div th:replace="navbar"></div>
-<div class="container mt-5">
-    <h2>Add Flight</h2>
-    <form action="/admin/add-flight" method="post">
-        <div class="form-group">
-            <label for="flightNumber">Flight Number</label>
-            <input type="text" class="form-control" id="flightNumber" name="flightNumber" required>
-        </div>
-        <div class="form-group">
-            <label for="departureAirport">Departure Airport</label>
-            <input type="text" class="form-control" id="departureAirport" name="departureAirport" required>
-        </div>
-        <div class="form-group">
-            <label for="destinationAirport">Destination Airport</label>
-            <input type="text" class="form-control" id="destinationAirport" name="destinationAirport" required>
-        </div>
-        <div class="form-group">
-            <label for="departureDatetime">Departure Date and Time</label>
-            <input type="datetime-local" class="form-control" id="departureDatetime" name="departureDatetime" required>
-        </div>
-        <div class="form-group">
-            <label for="arrivalDatetime">Arrival Date and Time</label>
-            <input type="datetime-local" class="form-control" id="arrivalDatetime" name="arrivalDatetime" required>
-        </div>
-        <div class="form-group">
-            <label for="ticketPrice">Ticket Price</label>
-            <input type="number" class="form-control" id="ticketPrice" name="ticketPrice" required>
-        </div>
-        <div class="form-group">
-            <label for="availableSeats">Available Seats</label>
-            <input type="number" class="form-control" id="availableSeats" name="availableSeats" required>
-        </div>
-        <div class="form-group">
-            <label for="class">Class</label>
-            <select id="class" name="class" class="form-control">
-                <option value="economy">Economy</option>
-                <option value="business">Business</option>
-                <option value="first">First Class</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Add Flight</button>
-    </form>
+<nav>
+    <!-- Airline name centered with clickable link -->
+    <a href="/" class="airline-name">
+        <span class="sky">Sky</span><span class="high">High Airways</span>
+    </a>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="/manage-flights"><i class="fas fa-plane"></i> Manage Flights</a>
+    <a href="/manage-users"><i class="fas fa-users"></i> Manage Users</a>
+    <a href="/manage-users"><i class="fas fa-users"></i> Manage Staff</a>
+    <a href="/" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
+
+<!-- Main content -->
+<div class="main-content">
+    <div class="container mt-5">
+        <h2>Add Flight</h2>
+        <form action="/admin/add-flight" method="post">
+            <div class="form-group">
+                <label for="flightNumber">Flight Number</label>
+                <input type="text" class="form-control" id="flightNumber" name="flightNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="departureAirport">Departure Airport</label>
+                <input type="text" class="form-control" id="departureAirport" name="departureAirport" required>
+            </div>
+            <div class="form-group">
+                <label for="destinationAirport">Destination Airport</label>
+                <input type="text" class="form-control" id="destinationAirport" name="destinationAirport" required>
+            </div>
+            <div class="form-group">
+                <label for="departureDatetime">Departure Date and Time</label>
+                <input type="datetime-local" class="form-control" id="departureDatetime" name="departureDatetime" required>
+            </div>
+            <div class="form-group">
+                <label for="arrivalDatetime">Arrival Date and Time</label>
+                <input type="datetime-local" class="form-control" id="arrivalDatetime" name="arrivalDatetime" required>
+            </div>
+            <div class="form-group">
+                <label for="ticketPrice">Ticket Price</label>
+                <input type="number" class="form-control" id="ticketPrice" name="ticketPrice" required>
+            </div>
+            <div class="form-group">
+                <label for="totalSeats">Available Seats</label>
+                <input type="number" class="form-control" id="totalSeats" name="totalSeats" required>
+            </div>
+
+            <div class="form-group">
+                <label for="class">Class</label>
+                <select id="class" name="class" class="form-control">
+                    <option value="economy">Economy</option>
+                    <option value="business">Business</option>
+                    <option value="first">First Class</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Flight</button>
+        </form>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

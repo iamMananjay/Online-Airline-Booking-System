@@ -37,17 +37,26 @@
 }
 
 .seat {
-    width: 50px; /* Adjust width as needed */
-    height: 50px; /* Adjust height as needed */
-    margin: 5px; /* Adjust margin as needed */
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    padding: 10px; /* Add padding */
     display: inline-block;
-    border: 1px solid darkgray; /* Add border */
+    border: 1px solid darkgray;
     text-align: center;
-    line-height: 50px;
+    line-height: 30px; /* Adjust line height */
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.3s; /* Add box-shadow transition */
+    border-radius: 8px; /* Add border radius */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add box shadow */
 }
+.seat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
 
 /* Add background colors for different states */
 .available {
@@ -85,11 +94,13 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .legend-item {
             display: flex;
             align-items: center;
-            margin-right: 15px;
+            margin-right: 20px; /* Increase margin */
         }
+
         .legend-box {
             width: 20px;
             height: 20px;
@@ -110,24 +121,27 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-         .confirm-btn {
-            margin-top: 20px;
-            display: block;
-            width: 200px;
-            padding: 10px;
-            background-color: #707b87;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
 
-        .confirm-button:hover {
-            background-color: #0056b3;
-        }
+
+.confirm-btn {
+    margin-top: 20px;
+    display: block;
+    width: 200px;
+    padding: 12px; /* Increase padding */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.confirm-btn:hover {
+    background-color: #0056b3;
+}
+
         /* Modal styles */
         .modal {
             display: none;
@@ -186,14 +200,22 @@
         .modal button:hover {
             background-color: #0056b3;
         }
-        .spacer{
-        width:150px;
-        }
+       .row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* Increase margin */
+}
+
+.spacer {
+    width: 150px; /* Decrease width */
+}
+
     </style>
 </head>
 <body>
 <div th:replace="navbar"></div>
 <h2>Seat Selection</h2>
+
 <form id="seatForm" action="/seats/flight/book" method="post">
     <input type="hidden" name="flightNumber" id="flightNumber" th:value="${seats[0].flightNumber}" />
     <input type="hidden" name="price" id="price" value=""/>
@@ -274,6 +296,8 @@
 
     </div>
 </div>
+
+
 
 <script>
     let selectedSeats = [];
@@ -404,12 +428,28 @@ function unlockSeat(seatNumber) {
         return;
     }
 
-    // Check if children are seated next to a guardian
-    const seatNumbers = selectedSeats.map(seat => parseInt(seat.replace(/[^\d]/g, ''))).sort((a, b) => a - b);
-    for (let i = 1; i < seatNumbers.length; i++) {
-        if (seatNumbers[i] - seatNumbers[i - 1] > 1) {
-            toastr.warning("Children must be seated next to a guardian.");
-            return;
+<!--    // Check if children are seated next to a guardian-->
+<!--    const seatNumbers = selectedSeats.map(seat => parseInt(seat.replace(/[^\d]/g, ''))).sort((a, b) => a - b);-->
+<!--    for (let i = 1; i < seatNumbers.length; i++) {-->
+<!--        if (seatNumbers[i] - seatNumbers[i - 1] > 1) {-->
+<!--            toastr.warning("Children must be seated next to a guardian.");-->
+<!--            return;-->
+<!--        }-->
+<!--    }-->
+
+
+    // Check if number of children is greater than 0
+    if (numberOfChildren > 0) {
+        // Retrieve selected seat numbers and sort them
+        const seatNumbers = selectedSeats.map(seat => parseInt(seat.replace(/[^\d]/g, ''))).sort((a, b) => a - b);
+
+        // Check if children are seated next to a guardian
+        for (let i = 1; i < seatNumbers.length; i++) {
+            if (seatNumbers[i] - seatNumbers[i - 1] > 1) {
+                // Display warning message using Toastr
+                toastr.warning("Children must be seated next to a guardian.");
+                return; // Stop further execution
+            }
         }
     }
 

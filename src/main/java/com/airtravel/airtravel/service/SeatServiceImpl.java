@@ -85,28 +85,33 @@ public void unlockExpiredSeats() {
         return seatRepository.findByFlightFlightId(flightId);
     }
 
-    @Override
-    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
-        return null;
-    }
-
-    @Override
-    public void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability) {
-
-    }
-
-    //    @Override
+//    @Override
 //    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
-//        return seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+//        return null;
+//    }
+
+//    @Override
+//    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
+//        return null;
 //    }
 //
 //    @Override
 //    public void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability) {
-//        Flight flight = flightRepository.findByFlightNumber(flightNumber);
-//        Seat seat = seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
-//        seat.setAvailable(availability);
-//        seatRepository.save(seat);
+//
 //    }
+
+        @Override
+    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
+        return seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+    }
+
+    @Override
+    public void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability) {
+        Flight flight = flightRepository.findByFlightNumber(flightNumber);
+        Seat seat = seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+        seat.setAvailable(availability);
+        seatRepository.save(seat);
+    }
     @Override
     public Seat getSeatByNumberAndFlight(String seatNumber, String flightNumber) {
         return seatRepository.findBySeatNumberAndFlightNumber(seatNumber, flightNumber).orElse(null);

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Account</title>
+    <link rel="stylesheet" type="text/css" href="/css/user.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity (last value) */
+    background-image: url('css/image/image3.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+        /* Custom CSS for styling the search box and button */
+        .form-group {
+            margin-bottom: 20px; /* Increase space between form groups */
+        }
+
+        .form-group label {
+            color: #fff; /* Set label color to white */
+        }
+
+        .form-group input[type="text"],
+        .form-group select {
+            background-color: rgba(255, 255, 255, 0.7); /* Add semi-transparent white background */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Add border radius */
+            padding: 10px; /* Add padding */
+            width: 100%; /* Ensure full width */
+        }
+
+        /* Style the search button */
+        .btn-primary {
+            background-color: #007bff; /* Set primary button color */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Add border radius */
+            padding: 10px 20px; /* Add padding */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darken button color on hover */
+        }
+         .quote {
+            font-style: italic;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity (last value) */
+    z-index: 1; /* Ensure the overlay is above other elements */
+}
+
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">SkyHigh Airways</a>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/userdetail"><i class="fas fa-user"></i> Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <header>
+        <h1>User Account</h1>
+    </header>
+    <section class="user-details">
+        <h2>User Details</h2>
+        <div class="detail">
+            <span class="label">Username:</span>
+            <span class="value" id="username">johndoe</span>
+        </div>
+        <div class="detail">
+            <span class="label">Email:</span>
+            <span class="value" id="email">johndoe@example.com</span>
+        </div>
+        <div class="detail">
+            <span class="label">Gender:</span>
+            <span class="value" id="gender">Male</span>
+        </div>
+        <div class="detail">
+            <span class="label">Contact Number:</span>
+            <span class="value" id="contactNumber">123-456-7890</span>
+        </div>
+        <div class="detail">
+            <span class="label">Address:</span>
+            <span class="value" id="address">1234 Elm Street</span>
+        </div>
+    </section>
+    <section class="flight-details">
+        <h2>Flight Details</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Destination</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="flightList">
+            <!-- Flight details will be populated here -->
+            </tbody>
+        </table>
+    </section>
+</div>
+<script>
+    // Mock data
+    const user = {
+        username: "johndoe",
+        email: "johndoe@example.com",
+        gender: "Male",
+        contactNumber: "123-456-7890",
+        address: "1234 Elm Street"
+    };
+
+    const flights = [
+        { flightNumber: "A123", destination: "New York", date: "2024-06-30", status: "Booked" },
+        { flightNumber: "B456", destination: "London", date: "2024-07-15", status: "Booked" }
+    ];
+
+    // Populate user details
+    document.getElementById('username').innerText = user.username;
+    document.getElementById('email').innerText = user.email;
+    document.getElementById('gender').innerText = user.gender;
+    document.getElementById('contactNumber').innerText = user.contactNumber;
+    document.getElementById('address').innerText = user.address;
+
+    // Populate flight details
+    const flightList = document.getElementById('flightList');
+    flights.forEach(flight => {
+        const tr = document.createElement('tr');
+
+        const now = new Date();
+        const flightDate = new Date(flight.date);
+        const diffTime = Math.abs(flightDate - now);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        tr.innerHTML = `
+            <td>${flight.flightNumber}</td>
+            <td>${flight.destination}</td>
+            <td>${flight.date}</td>
+            <td>${flight.status}</td>
+            <td>${diffDays > 3 ? `<button onclick="cancelFlight('${flight.flightNumber}')">Cancel</button>` : 'Cannot Cancel'}</td>
+        `;
+        flightList.appendChild(tr);
+    });
+
+    // Mock cancel flight function
+    function cancelFlight(flightNumber) {
+        alert(`Flight ${flightNumber} cancelled.`);
+        // Here you can add logic to cancel the flight
+    }
+</script>
+</body>
+</html>
