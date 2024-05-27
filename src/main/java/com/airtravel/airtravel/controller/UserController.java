@@ -1,6 +1,5 @@
 package com.airtravel.airtravel.controller;
 
-
 import com.airtravel.airtravel.model.Flight;
 import com.airtravel.airtravel.model.User;
 import com.airtravel.airtravel.service.FlightService;
@@ -17,7 +16,6 @@ import org.springframework.ui.Model;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-
 @Controller
 public class UserController {
     @Autowired
@@ -33,25 +31,10 @@ public class UserController {
         return "index"; // Assuming you have a home.html template
     }
 
-
     @PostMapping("/register")
     public String register(@ModelAttribute("user") User user) {
         userService.register(user);
         return "redirect:/login";
-    }
-
-    @PostMapping("/perform_login")
-    public String perform_login(@ModelAttribute("username") String username,
-                        @ModelAttribute("password") String password, HttpSession session,Model model) {
-        User user = userService.login(username, password);
-
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            session.setAttribute("user", user); // Store user in session
-            return "redirect:/dashboard";
-        } else {
-            model.addAttribute("error", "Invalid username or password.");
-            return "login";
-        }
     }
 
     @GetMapping("/login")
@@ -63,45 +46,28 @@ public class UserController {
     public String register() {
         return "register"; // Assuming you have a register.html template
     }
+
     @GetMapping("/userdashboard")
-    public String userdashboard() {
-        return "userdashboard"; // Assuming you have a register.html template
+    public String userDashboard() {
+        return "userdashboard"; // Assuming you have a userdashboard.html template
     }
 
-
-
-
-@GetMapping("/dashboard")
-public String dashboard(Model model) {
-
-    return "dashboard"; // Redirect to flights list
-}
-
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(Model model) {
+        return "dashboard"; // Assuming you have an admin dashboard template
+    }
 
     @GetMapping("/userdetail")
-    public String userdetail(Model model) {
-
-        return "userdetail"; // Redirect to flights list
+    public String userDetail(Model model) {
+        return "userdetail"; // Assuming you have a user detail template
     }
 
-    //
     @GetMapping("/manage-flights")
-    public String manageFlight(Model model) {
+    public String manageFlights(Model model) {
         List<Flight> flights = flightService.getAllFlights();
-
-        // Format departureDatetime before passing to the template
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         flights.forEach(flight -> flight.setFormattedDepartureDate(flight.getDepartureDatetime().format(formatter)));
-
         model.addAttribute("flights", flights);
-        return "manage-flights"; // Redirect to flights list
+        return "manage-flights"; // Assuming you have a manage-flights.html template
     }
-
-
-
-
-
-
-
 }
-
