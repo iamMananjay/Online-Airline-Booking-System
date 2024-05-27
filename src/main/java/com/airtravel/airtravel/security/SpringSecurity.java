@@ -35,23 +35,19 @@ public class SpringSecurity {
                         .requestMatchers("/add-flight").permitAll()
                         .requestMatchers("/seats/**").permitAll()
                         .requestMatchers("/seats/flight/**").permitAll()
+                        .requestMatchers("/seats/flight/**").permitAll()
+                        .requestMatchers("/seats/**").hasAnyRole("USER", "ADMIN")
+
 
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/perform_login")
-                                                .defaultSuccessUrl("/userdashboard", true)
-
+                         .defaultSuccessUrl("/userdashboard", true)
                         .permitAll()
                 )
 
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .loginProcessingUrl("/perform_login")
-//                        .defaultSuccessUrl("/perform_login", true)
-//                        .permitAll()
-//                )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")

@@ -85,20 +85,6 @@ public void unlockExpiredSeats() {
         return seatRepository.findByFlightFlightId(flightId);
     }
 
-//    @Override
-//    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
-//        return null;
-//    }
-
-//    @Override
-//    public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
-//        return null;
-//    }
-//
-//    @Override
-//    public void updateSeatAvailability(String flightNumber, String seatNumber, boolean availability) {
-//
-//    }
 
         @Override
     public Seat getSeatByNumberAndFlight(String seatNumber, Flight flight) {
